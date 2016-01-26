@@ -37,13 +37,7 @@ var app = {
             rooms[datum.roomname] = [];
             rooms[datum.roomname].push(datum);
           }
-          datum.text = xssFilters.inHTMLData(datum.text);
-          datum.username = xssFilters.inHTMLData(datum.username);
-          var $chatDiv = `<div chat><div class="username">${datum.username}</div><div class="createdAt">${datum.createdAt}</div><div class="text">${datum.text}</div></div>`
-
-          $("#chats").append(`<div chat><div class="username">${datum.username}</div>
-            <div class="createdAt">${datum.createdAt}</div>
-            <div class="text">${datum.text}</div></div>`);
+          app.addMessage(datum);
         });
 
         for(var key in rooms){
@@ -71,7 +65,23 @@ var app = {
         console.log("Posted!");
       }
     })
+  },
+
+  clearMessages: function(){
+    $('#chats').children().remove();
+  },
+
+  addMessage: function(datum){
+    datum.text = xssFilters.inHTMLData(datum.text);
+    datum.username = xssFilters.inHTMLData(datum.username);
+    var $chatDiv = `<div chat><div class="username">${datum.username}</div><div class="createdAt">${datum.createdAt}</div><div class="text">${datum.text}</div></div>`
+
+    $("#chats").append(`<div chat><div class="username">${datum.username}</div>
+    <div class="createdAt">${datum.createdAt}</div>
+    <div class="text">${datum.text}</div></div>`);
+
   }
+  
 };
 
 app.init();
