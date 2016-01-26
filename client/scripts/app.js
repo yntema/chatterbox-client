@@ -12,8 +12,12 @@ var app = {
         $('#chats').children().remove();
         app.fetch();
       });
-      $('#submit').on('click', () => {
-        app.send();
+      $('#send .submit').on('submit', () => {
+        app.handleSubmit();
+      });
+      $('div').on('click', '.username', (event) => {
+        var user = event.target.innerText.toString();
+        app.addFriend(user);
       });
     });
   },
@@ -41,7 +45,7 @@ var app = {
         });
 
         for(var key in rooms){
-          $('select').append(`<option value ="${key}">${key}</option>`);
+          app.addRoom(key);
         }
       }
     });
@@ -79,9 +83,21 @@ var app = {
     $("#chats").append(`<div chat><div class="username">${datum.username}</div>
     <div class="createdAt">${datum.createdAt}</div>
     <div class="text">${datum.text}</div></div>`);
-
-  }
+  },
   
+  addRoom (roomname) {
+    roomname = xssFilters.inHTMLData(roomname);
+    $('#roomSelect').append(`<option value ="${roomname}">${roomname}</option>`);
+  },
+
+  addFriend (name) {
+    console.log(name);
+  },
+
+  handleSubmit (packet) {
+    app.send(packet);
+    console.log('submit');
+  }
 };
 
 app.init();
