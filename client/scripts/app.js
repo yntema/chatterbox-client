@@ -20,9 +20,15 @@ var app = {
       });
       $('#roomSelect').change( (event) => {
         var selectedRoom = event.target.value;
-        // console.log(selectedRoom);
         app.selectRoom(selectedRoom);
-      })
+      });
+      $('#create').on('click', (event) => {
+        var $newChatRoom = $('#newChatRoom').val();
+        app.postNewRoom($newChatRoom);
+        app.fetch();
+        $('#roomSelect $newChatRoom').
+        app.selectRoom($newChatRoom);
+      });
     });
   },
 
@@ -110,7 +116,6 @@ var app = {
   },
 
   selectRoom (roomname) {
-    console.log(roomname);
     if(roomname === "allRooms"){
       $('#chats').children().show();
     }else{
@@ -123,6 +128,20 @@ var app = {
         $(item).show();
       });
     }
+  },
+
+  postNewRoom (roomname) {           
+    var dataPacket = {
+      roomname: roomname
+    };
+    $.ajax({
+      url: app.server,
+      type: 'POST',
+      data: JSON.stringify(dataPacket),
+      success: () => {
+        console.log("Posted!");
+      }
+    });
   }
 
 };
