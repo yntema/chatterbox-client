@@ -9,7 +9,6 @@ var app = {
     $(document).ready(() => {
       app.fetch();
       $('#refresh').on('click', (event) => {
-        $('#chats').children().remove();
         app.fetch();
       });
       $('#send .submit').on('submit', () => {
@@ -19,6 +18,11 @@ var app = {
         var user = event.target.innerText.toString();
         app.addFriend(user);
       });
+      $('#roomSelect').change( (event) => {
+        var selectedRoom = event.target.value;
+        // console.log(selectedRoom);
+        app.selectRoom(selectedRoom);
+      })
     });
   },
 
@@ -32,7 +36,10 @@ var app = {
       success: (info) => {
 
         var data = info.results;
-        var rooms = {};
+        var rooms = {
+          "All rooms": 1
+        };
+        app.clearMessages();
 
         data.forEach( (datum) => {
           if(rooms[datum.roomname] !== undefined) {
@@ -73,16 +80,19 @@ var app = {
 
   clearMessages () {
     $('#chats').children().remove();
+    $('#roomSelect').children().remove();
   },
 
   addMessage (datum) {
     datum.text = xssFilters.inHTMLData(datum.text);
     datum.username = xssFilters.inHTMLData(datum.username);
-    var $chatDiv = `<div chat><div class="username">${datum.username}</div><div class="createdAt">${datum.createdAt}</div><div class="text">${datum.text}</div></div>`
+    datum.roomname = xssFilters.inHTMLData(datum.roomname);
+    var $chatDiv = `<div class="chat ${datum.roomname}">
+      <div class="username">${datum.username}</div>
+      <div class="createdAt">${datum.createdAt}</div>
+      <div class="text">${datum.text}</div></div>`;
 
-    $("#chats").append(`<div chat><div class="username">${datum.username}</div>
-    <div class="createdAt">${datum.createdAt}</div>
-    <div class="text">${datum.text}</div></div>`);
+    $("#chats").append($chatDiv);
   },
   
   addRoom (roomname) {
@@ -96,8 +106,36 @@ var app = {
 
   handleSubmit (packet) {
     app.send(packet);
-    console.log('submit');
+  },
+
+  selectRoom (roomname) {
+    var $allChats = $('#chats').children();
+    var filteredChats = _.filter($allChats, (chat) => {
+      return chat.classList[1] === roomname;
+    });
+    $('#chats').children().hide();
+    filteredChats.forEach((item) => {
+      $(item).show();
+    });
   }
+
 };
 
 app.init();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
