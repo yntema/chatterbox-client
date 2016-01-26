@@ -2,6 +2,9 @@
 
 
 var app = {
+
+  server: 'https://api.parse.com/1/classes/chatterbox',
+
   init: function(){
     $(document).ready(function(){
       app.fetch();
@@ -19,7 +22,7 @@ var app = {
 
     $.ajax(
     {
-      url: 'https://api.parse.com/1/classes/chatterbox',
+      url: app.server,
       type: 'GET',
       data: {"order":"-updatedAt"},
       success: function(info) {
@@ -51,17 +54,17 @@ var app = {
   },
 
   send: function(packet){
+    var username = window.location.search.split("=")[1];
+    var $form = $('input');
+    var $option = $('select');
            
     var dataPacket = packet || {
       roomname: $option.val(),
       text: $form[0].value,
       username: username
     };
-    var username = window.location.search.split("=")[1];
-    var $form = $('input');
-    var $option = $('select');
     $.ajax({
-      url: 'https://api.parse.com/1/classes/chatterbox',
+      url: app.server,
       type: 'POST',
       data: JSON.stringify(dataPacket),
       success: function(){
