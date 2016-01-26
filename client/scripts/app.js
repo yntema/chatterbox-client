@@ -5,32 +5,32 @@ var app = {
 
   server: 'https://api.parse.com/1/classes/chatterbox',
 
-  init: function(){
-    $(document).ready(function(){
+  init () {
+    $(document).ready(() => {
       app.fetch();
-      $('#refresh').on('click', function(event){
+      $('#refresh').on('click', (event) => {
         $('#chats').children().remove();
         app.fetch();
       });
-      $('#submit').on('click', function() {
+      $('#submit').on('click', () => {
         app.send();
       });
     });
   },
 
-  fetch: function(){
+  fetch () {
 
     $.ajax(
     {
       url: app.server,
       type: 'GET',
       data: {"order":"-updatedAt"},
-      success: function(info) {
+      success: (info) => {
 
         var data = info.results;
         var rooms = {};
 
-        data.forEach( function(datum){
+        data.forEach( (datum) => {
           if(rooms[datum.roomname] !== undefined) {
             rooms[datum.roomname].push(datum);
           } else {
@@ -47,7 +47,7 @@ var app = {
     });
   },
 
-  send: function(packet){
+  send (packet) {
     var username = window.location.search.split("=")[1];
     var $form = $('input');
     var $option = $('select');
@@ -61,17 +61,17 @@ var app = {
       url: app.server,
       type: 'POST',
       data: JSON.stringify(dataPacket),
-      success: function(){
+      success: () => {
         console.log("Posted!");
       }
     })
   },
 
-  clearMessages: function(){
+  clearMessages () {
     $('#chats').children().remove();
   },
 
-  addMessage: function(datum){
+  addMessage (datum) {
     datum.text = xssFilters.inHTMLData(datum.text);
     datum.username = xssFilters.inHTMLData(datum.username);
     var $chatDiv = `<div chat><div class="username">${datum.username}</div><div class="createdAt">${datum.createdAt}</div><div class="text">${datum.text}</div></div>`
