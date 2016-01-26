@@ -36,12 +36,13 @@ var app = {
       success: (info) => {
 
         var data = info.results;
-        var rooms = {
-          "All rooms": 1
-        };
+        var rooms = {};
         app.clearMessages();
 
+        $('#roomSelect').append(`<option selected="selected" value ="allRooms">All rooms</option>`);
+
         data.forEach( (datum) => {
+          datum.roomname = xssFilters.inHTMLData(datum.roomname);
           if(rooms[datum.roomname] !== undefined) {
             rooms[datum.roomname].push(datum);
           } else {
@@ -109,14 +110,19 @@ var app = {
   },
 
   selectRoom (roomname) {
-    var $allChats = $('#chats').children();
-    var filteredChats = _.filter($allChats, (chat) => {
-      return chat.classList[1] === roomname;
-    });
-    $('#chats').children().hide();
-    filteredChats.forEach((item) => {
-      $(item).show();
-    });
+    console.log(roomname);
+    if(roomname === "allRooms"){
+      $('#chats').children().show();
+    }else{
+      var $allChats = $('#chats').children();
+      var filteredChats = _.filter($allChats, (chat) => {
+        return chat.classList[1] === roomname;
+      });
+      $('#chats').children().hide();
+      filteredChats.forEach((item) => {
+        $(item).show();
+      });
+    }
   }
 
 };
