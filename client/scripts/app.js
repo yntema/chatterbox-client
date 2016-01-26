@@ -50,15 +50,16 @@ var app = {
     });
   },
 
-  send: function(){       
-    var username = window.location.search.split("=")[1];
-    var $form = $('input');
-    var $option = $('select');
-    var dataPacket = {
+  send: function(packet){
+           
+    var dataPacket = packet || {
       roomname: $option.val(),
       text: $form[0].value,
       username: username
     };
+    var username = window.location.search.split("=")[1];
+    var $form = $('input');
+    var $option = $('select');
     $.ajax({
       url: 'https://api.parse.com/1/classes/chatterbox',
       type: 'POST',
