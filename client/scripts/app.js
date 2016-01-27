@@ -5,13 +5,17 @@ var app = {
 
   server: 'https://api.parse.com/1/classes/chatterbox',
 
+  friends: [],
+
   init () {
     $(document).ready(() => {
+
+
       app.fetch();
       $('#refresh').on('click', (event) => {
         app.fetch();
       });
-      $('#send .submit').on('submit', () => {
+      $('input[type="submit"]').on('click', () => {
         app.handleSubmit();
       });
       $('div').on('click', '.username', (event) => {
@@ -29,11 +33,12 @@ var app = {
         $('#roomSelect $newChatRoom').
         app.selectRoom($newChatRoom);
       });
+
+      setInterval(app.fetch, 3000);
     });
   },
 
   fetch () {
-
     $.ajax(
     {
       url: app.server,
@@ -43,9 +48,10 @@ var app = {
 
         var data = info.results;
         var rooms = {};
+        var currentRoom = $('option').filter(":selected").val();
         app.clearMessages();
-
-        $('#roomSelect').append(`<option selected="selected" value ="allRooms">All rooms</option>`);
+ 
+        $('#roomSelect').append(`<option value ="allRooms">All rooms</option>`);
 
         data.forEach( (datum) => {
           datum.roomname = xssFilters.inHTMLData(datum.roomname);
@@ -61,13 +67,24 @@ var app = {
         for(var key in rooms){
           app.addRoom(key);
         }
+        app.selectRoom(currentRoom);
+
+        var availableRooms = $('#roomSelect').children();
+
+        _.each(availableRooms, function(room){
+          if(room.value === currentRoom){
+            room.selected = true;
+          }else{
+            room.selected = false;
+          }
+        });
       }
     });
   },
 
   send (packet) {
     var username = window.location.search.split("=")[1];
-    var $form = $('input');
+    var $form = $('#message');
     var $option = $('select');
            
     var dataPacket = packet || {
@@ -75,6 +92,7 @@ var app = {
       text: $form[0].value,
       username: username
     };
+
     $.ajax({
       url: app.server,
       type: 'POST',
@@ -100,6 +118,9 @@ var app = {
       <div class="text">${datum.text}</div></div>`;
 
     $("#chats").append($chatDiv);
+    if(app.friends.indexOf(datum.username)){
+      $chatDiv.addClass('friend');
+    }
   },
   
   addRoom (roomname) {
@@ -108,11 +129,12 @@ var app = {
   },
 
   addFriend (name) {
-    console.log(name);
+    app.friends.push(name);
   },
 
   handleSubmit (packet) {
     app.send(packet);
+    app.fetch();
   },
 
   selectRoom (roomname) {
@@ -147,7 +169,6 @@ var app = {
 };
 
 app.init();
-
 
 
 
