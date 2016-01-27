@@ -29,9 +29,12 @@ var app = {
       $('#create').on('click', (event) => {
         var $newChatRoom = $('#newChatRoom').val();
         app.postNewRoom($newChatRoom);
-        app.fetch();
-        $('#roomSelect $newChatRoom').
         app.selectRoom($newChatRoom);
+        app.fetch();
+        
+        //$(`#roomSelect ${$newChatRoom}`);
+
+        // app.goToRoom($newChatRoom);
       });
 
       setInterval(app.fetch, 3000);
@@ -150,11 +153,15 @@ var app = {
         $(item).show();
       });
     }
+    //app.fetch();
   },
 
   postNewRoom (roomname) {           
+    
     var dataPacket = {
-      roomname: roomname
+      roomname: roomname.split(" ").join(""),
+      username: window.location.search.split("=")[1],
+      text: `There's some weird shit happening in ${roomname}!`
     };
     $.ajax({
       url: app.server,
@@ -162,6 +169,24 @@ var app = {
       data: JSON.stringify(dataPacket),
       success: () => {
         console.log("Posted!");
+      }
+    });
+    app.addRoom(dataPacket.roomname);
+    app.selectRoom(dataPacket.roomname);
+    app.goToRoom(dataPacket.roomname);
+  },
+
+  goToRoom (roomname) {
+    roomname = roomname.split(" ").join("");
+
+    var availableRooms = $('#roomSelect').children();
+
+    _.each(availableRooms, function(room){
+      if(room.value === roomname){
+        room.selected = true;
+        console.log(room);
+      }else{
+        room.selected = false;
       }
     });
   }
