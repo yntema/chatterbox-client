@@ -103,7 +103,8 @@ var app = {
       success: () => {
         console.log("Posted!");
       }
-    })
+    });
+    $("#message").val('');
   },
 
   clearMessages () {
@@ -180,7 +181,7 @@ var app = {
     roomname = roomname.split(" ").join("");
 
     var availableRooms = $('#roomSelect').children();
-
+    $('#newChatRoom').val('');
     _.each(availableRooms, function(room){
       if(room.value === roomname){
         room.selected = true;
