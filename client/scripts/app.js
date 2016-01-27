@@ -31,22 +31,30 @@ var app = {
         app.postNewRoom($newChatRoom);
         app.selectRoom($newChatRoom);
         app.fetch();
-        
-        //$(`#roomSelect ${$newChatRoom}`);
-
-        // app.goToRoom($newChatRoom);
       });
+
+      $('#friendBox').hide();
 
       setInterval(app.fetch, 3000);
     });
   },
 
-  fetch () {
+  fetch (roomSpecification) {
+
+    roomSpecification = roomSpecification || "lobby";
+    console.log(roomSpecification);
+    // var dataObject = {
+    //   where:{
+    //     "roomname":`${roomSpecification}`
+    //   },
+    //   order:"-createdAt"
+    // };
     $.ajax(
     {
       url: app.server,
       type: 'GET',
-      data: {"order":"-updatedAt"},
+      data: {order:"-createdAt"},       
+
       success: (info) => {
 
         var data = info.results;
@@ -134,6 +142,7 @@ var app = {
 
   addFriend (name) {
     app.friends[name] = 1;
+    app.postFriendList();
   },
 
   handleSubmit (packet) {
@@ -154,7 +163,6 @@ var app = {
         $(item).show();
       });
     }
-    //app.fetch();
   },
 
   postNewRoom (roomname) {           
@@ -190,6 +198,15 @@ var app = {
         room.selected = false;
       }
     });
+  },
+
+  postFriendList () {
+    $('#friendBox').show();
+    var $list = $('#friendList');
+    $list.html('');
+    for(var key in app.friends){
+      $list.append(`<li class='friendOnList'>${key}</li>`);
+    }
   }
 
 };

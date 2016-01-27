@@ -86,3 +86,18 @@ form input[type=text] {
 .friend {
     font-weight: bold;
 }
+
+#roomSelect{
+    max-width: 400px;
+}
+
+#friendBox{
+    border: 1px solid black;
+    width: 150px;
+    padding: 20px 20px;
+    margin: 10px auto;
+}
+
+li{
+    list-style-type: none;
+}
