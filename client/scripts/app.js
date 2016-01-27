@@ -5,7 +5,7 @@ var app = {
 
   server: 'https://api.parse.com/1/classes/chatterbox',
 
-  friends: [],
+  friends: {},
 
   init () {
     $(document).ready(() => {
@@ -112,15 +112,15 @@ var app = {
     datum.text = xssFilters.inHTMLData(datum.text);
     datum.username = xssFilters.inHTMLData(datum.username);
     datum.roomname = xssFilters.inHTMLData(datum.roomname);
-    var $chatDiv = `<div class="chat ${datum.roomname}">
+    var chatFront = `<div class="chat`;
+    if(app.friends[datum.username]){
+      chatFront += ` friend`;
+    }
+    var $chatDiv = chatFront + ` ${datum.roomname}">
       <div class="username">${datum.username}</div>
       <div class="createdAt">${datum.createdAt}</div>
       <div class="text">${datum.text}</div></div>`;
-
     $("#chats").append($chatDiv);
-    if(app.friends.indexOf(datum.username)){
-      $chatDiv.addClass('friend');
-    }
   },
   
   addRoom (roomname) {
@@ -129,7 +129,7 @@ var app = {
   },
 
   addFriend (name) {
-    app.friends.push(name);
+    app.friends[name] = 1;
   },
 
   handleSubmit (packet) {
